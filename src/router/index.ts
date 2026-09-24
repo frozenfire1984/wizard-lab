@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { ref } from 'vue'
 import HomeView from '../views/HomeView.vue'
 import ContactsView from '@/views/ContactsView.vue'
 import ShopView from '@/views/ShopView.vue'
@@ -7,6 +8,7 @@ import ShopGiftsView from '@/views/shop/ShopGiftsView.vue'
 import ShopDefaultView from '@/views/shop/ShopDefaultView.vue'
 import UsersView from '@/views/UsersView.vue'
 import UserDetailsView from '@/views/UserDetailsView.vue'
+import LoginView from '@/views/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,12 +34,14 @@ const router = createRouter({
     {
       path: '/users',
       name: 'users',
-      component: UsersView
+      component: UsersView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/users/:id',
       name: 'user',
-      component: UserDetailsView
+      component: UserDetailsView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/shop',
@@ -60,7 +64,35 @@ const router = createRouter({
         }
       ]
     },
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView
+    },
   ],
+})
+
+export const isRouteLoading = ref(false)
+
+router.beforeEach((to, from) => {
+  const isAuthenticated: boolean = false;
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    return {
+      name: "login",
+      query: { redirect: to.fullPath }
+    }
+  }
+
+  isRouteLoading.value = true
+})
+
+router.afterEach(() => {
+  isRouteLoading.value = false
+})
+
+router.onError(() => {
+  isRouteLoading.value = false
 })
 
 export default router

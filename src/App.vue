@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import { isRouteLoading } from '@/router'
 </script>
 
 <template>
@@ -20,6 +21,7 @@ import HelloWorld from './components/HelloWorld.vue'
     </div>
   </header>
 
+  <div v-if="isRouteLoading">Loading...</div>
   <RouterView />
 </template>
 

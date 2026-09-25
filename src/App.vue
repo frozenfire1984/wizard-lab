@@ -2,6 +2,9 @@
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import { isRouteLoading } from '@/router'
+import { useCounterStore } from '@/stores/counter.ts'
+
+const counter = useCounterStore();
 </script>
 
 <template>
@@ -9,7 +12,7 @@ import { isRouteLoading } from '@/router'
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
-      <HelloWorld msg="Foo Bar" />
+      <HelloWorld :msg="counter.count" />
 
       <nav>
         <RouterLink to="/">Home</RouterLink>

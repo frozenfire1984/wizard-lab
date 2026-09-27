@@ -9,6 +9,9 @@ import ShopDefaultView from '@/views/shop/ShopDefaultView.vue'
 import UsersView from '@/views/UsersView.vue'
 import UserDetailsView from '@/views/UserDetailsView.vue'
 import LoginView from '@/views/LoginView.vue'
+import { useUiStore } from '@/stores/ui.ts'
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -72,7 +75,7 @@ const router = createRouter({
   ],
 })
 
-export const isRouteLoading = ref(false)
+//export const isRouteLoading = ref(false)
 
 router.beforeEach((to, from) => {
   const isAuthenticated: boolean = false;
@@ -83,16 +86,22 @@ router.beforeEach((to, from) => {
       query: { redirect: to.fullPath }
     }
   }
+  const ui = useUiStore()
+  ui.routeLoadingStateEnable();
 
-  isRouteLoading.value = true
+  //isRouteLoading.value = true
 })
 
 router.afterEach(() => {
-  isRouteLoading.value = false
+  const ui = useUiStore()
+  ui.routeLoadingStateDisable();
+  //isRouteLoading.value = false
 })
 
 router.onError(() => {
-  isRouteLoading.value = false
+  const ui = useUiStore()
+  ui.routeLoadingStateDisable();
+  //isRouteLoading.value = false
 })
 
 export default router

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
-import { isRouteLoading } from '@/router'
+//import { isRouteLoading } from '@/router'
+import { useUiStore } from '@/stores/ui.ts'
 import { useCounterStore } from '@/stores/counter.ts'
 
 const counter = useCounterStore();
+const ui = useUiStore();
 </script>
 
 <template>
@@ -24,7 +26,7 @@ const counter = useCounterStore();
     </div>
   </header>
 
-  <div v-if="isRouteLoading">Loading...</div>
+  <div v-if="ui.isRouteLoading">Loading...</div>
   <RouterView />
 </template>
 

@@ -1,5 +1,11 @@
-nav {
+.logo {
+  font-weight: bold;
+}
 
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 hr {

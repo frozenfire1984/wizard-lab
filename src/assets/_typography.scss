@@ -1,0 +1,12 @@
+a {
+  color: gray;
+
+  &:hover, &:active {
+    color: green;
+  }
+}
+
+.router-link-active,
+.router-link-exact-active {
+  color: darkgreen;
+}

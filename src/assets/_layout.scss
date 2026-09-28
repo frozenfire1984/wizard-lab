@@ -1,0 +1,33 @@
+#app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  margin: 0 auto;
+  width: min(100%, 1024px);
+  padding-inline: 12px;
+}
+
+.header {
+  border-bottom: 1px var(--pl-border-color) solid;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-block: 16px;
+  }
+}
+
+.main {
+  display: grid;
+  flex: 1;
+  padding-block: 24px;
+}
+
+.footer {
+  padding-block: 12px;
+  border-top: 1px var(--pl-border-color) solid;
+}

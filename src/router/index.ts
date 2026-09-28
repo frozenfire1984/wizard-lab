@@ -18,29 +18,29 @@ const router = createRouter({
       path: '/wizard',
       name: 'wizard',
       component: WizardView,
-      redirect: { name: 'wizard-size'},
+      redirect: { name: 'wizard-size' },
       children: [
         {
           path: 'size',
           name: 'wizard-size',
-          component: StepSize
+          component: StepSize,
         },
         {
           path: 'toppings',
           name: 'wizard-toppings',
-          component: StepToppings
+          component: StepToppings,
         },
         {
           path: 'delivery',
           name: 'wizard-delivery',
-          component: StepDelivery
+          component: StepDelivery,
         },
         {
           path: 'confirm',
           name: 'wizard-confirm',
-          component: StepConfirm
+          component: StepConfirm,
         },
-      ]
+      ],
     },
   ],
 })

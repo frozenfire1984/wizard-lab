@@ -1,4 +1,4 @@
-import type { Size, Topping } from '@/types/pizza.types.ts'
+import type { Size, Topping } from '@/types/pizza.types'
 
 export const SIZES: Size[] = [
   {

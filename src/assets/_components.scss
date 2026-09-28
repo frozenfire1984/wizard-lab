@@ -18,10 +18,16 @@ hr {
   display: inline-flex;
   width: fit-content;
   padding: 0.5em 1em;
-  background-color: #ccc;
+  background-color: darkgreen;
+  color: #fff;
   border-radius: 6px;
   cursor: pointer;
   border: none;
+  font-size: 1rem;
+
+  &:hover, &:active {
+    background-color: green;
+  }
 }
 
 .user-list {

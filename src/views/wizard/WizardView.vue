@@ -48,4 +48,9 @@ import { RouterLink, RouterView } from 'vue-router'
 :deep(.wizard-step__body) {
   flex: 1;
 }
+
+:deep(.wizard-step__footer) {
+  display: flex;
+  justify-content: end;
+}
 </style>

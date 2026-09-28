@@ -25,8 +25,15 @@ hr {
   border: none;
   font-size: 1rem;
 
-  &:hover, &:active {
+  &:hover,
+  &:active {
     background-color: green;
+  }
+
+  &[disabled] {
+    pointer-events: none;
+    filter: grayscale(100%);
+    opacity: 0.8;
   }
 }
 

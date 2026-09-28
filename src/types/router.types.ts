@@ -1,5 +1,6 @@
 import type { RouteRecordInfo } from 'vue-router'
 
+// prettier-ignore
 export interface AppRouteMap {
   'home': RouteRecordInfo<'home', '/', Record<never, never>, Record<never, never>>,
   'wizard': RouteRecordInfo<'wizard', '/wizard', Record<never, never>, Record<never, never>>,
@@ -13,9 +14,7 @@ declare module 'vue-router' {
   interface TypesConfig {
     RouteNamedMap: AppRouteMap
   }
-}
 
-declare module 'vue-router' {
   interface RouteMeta {
     step?: number
     title?: string

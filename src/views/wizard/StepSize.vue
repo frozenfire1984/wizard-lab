@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { SIZES } from '@/wizard/menu.ts'
-import type { SizeId } from '@/types/pizza.types'
+import { useOrderStore } from '@/stores/order.ts'
 
-const selectedSizeId = ref<SizeId | null>(null)
+const order = useOrderStore()
 
-const currentSize = computed(() => {
-  return SIZES.find((s) => s.id === selectedSizeId.value)
-})
+const router = useRouter()
 
-function selectSize(id: SizeId) {
-  selectedSizeId.value = id
+function nextStep() {
+  router.push({ name: 'wizard-toppings' })
 }
 </script>
 
@@ -21,26 +19,22 @@ function selectSize(id: SizeId) {
       <ul :class="$style.items">
         <li
           v-for="size in SIZES"
-          :class="[$style.item, { [$style.selected]: size.id === selectedSizeId }]"
+          :class="[$style.item, { [$style.selected]: size.id === order.sizeId }]"
           :key="size.id"
         >
           <div>
             <strong :class="$style.title">{{ size.title }}</strong>
           </div>
-          <div>
-            <strong>Diameter:</strong> {{ size.diameter }}cm
-          </div>
-          <div>
-            <strong>Price:</strong> {{ size.price }}$
-          </div>
-          <button class="btn" @click="selectSize(size.id)">Choice</button>
+          <div><strong>Diameter:</strong> {{ size.diameter }}cm</div>
+          <div><strong>Price:</strong> {{ size.price }}$</div>
+          <button class="btn" @click="order.selectSize(size.id)">Choice</button>
         </li>
       </ul>
       <hr />
-      {{ currentSize?.title }}
+      {{ order.size?.title }}
     </div>
     <footer class="wizard-step__footer">
-      <button class="btn">Next</button>
+      <button class="btn" @click="nextStep()" :disabled="!order.sizeId">Next</button>
     </footer>
   </div>
 </template>

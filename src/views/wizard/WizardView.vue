@@ -14,7 +14,12 @@ const order = useOrderStore()
         <RouterLink :to="{ name: 'wizard-delivery' }">Delivery</RouterLink>
         <RouterLink :to="{ name: 'wizard-confirm' }">Confirm</RouterLink>
       </nav>
-      <hr>
+      <hr />
+      Total price: <strong>{{ order.totalPrice }}$</strong>
+      <div v-if="order.discount">
+        Your discount: <strong :class="$style.discount">{{order.discount}}$</strong>
+      </div>
+      <hr />
       <pre>
         {{ order.$state }}
       </pre>
@@ -25,6 +30,13 @@ const order = useOrderStore()
     </div>
   </section>
 </template>
+
+<style module>
+.discount {
+  color: red;
+}
+
+</style>
 
 <style scoped lang="scss">
 .wizard {

@@ -44,10 +44,25 @@ export const useOrderStore = defineStore('order', () => {
     toppingIds.value = [...arr]
   }
 
+  // Price
 
+  const discount = computed(() => {
+    return price.value > 1200 ? 300 : 0
+  })
+
+  const price = computed(() => {
+    const base = size.value?.price ?? 0
+    const extra = toppings.value.reduce((sum, t) => {
+      return sum + t.price
+    }, 0)
+    return base + extra
+  })
+
+  const totalPrice = computed(() => price.value - discount.value)
 
   return {
     sizeId, size, selectSize,
-    toppingIds, toppings, toggleTopping, isToppingSelected, hasTopping
+    toppingIds, toppings, toggleTopping, isToppingSelected, hasTopping,
+    totalPrice, discount
   }
 })

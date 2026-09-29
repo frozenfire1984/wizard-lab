@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { SizeId } from '@/types/pizza.types.ts'
-import { SIZES } from '@/wizard/menu.ts'
+import type { SizeId, ToppingId } from '@/types/pizza.types.ts'
+import { SIZES, TOPPINGS } from '@/wizard/menu.ts'
 
 export const useOrderStore = defineStore('order', () => {
+
+  // Size
   const sizeId = ref<SizeId | null>(null)
 
   const size = computed(() => {
@@ -14,5 +16,38 @@ export const useOrderStore = defineStore('order', () => {
     sizeId.value = id
   }
 
-  return { sizeId, size, selectSize }
+
+  // Topping
+  const toppingIds = ref<ToppingId[]>([])
+
+  const toppings = computed(() => {
+    return TOPPINGS.filter((s) => toppingIds.value.includes(s.id))
+  })
+
+  const hasTopping = computed(() => {
+    return toppingIds.value.length > 0
+  })
+  
+  function isToppingSelected(id: ToppingId) {
+    return toppingIds.value.includes(id)
+  }
+
+  function toggleTopping(id: ToppingId) {
+    const arr = new Set(toppingIds.value)
+
+    if (arr.has(id)) {
+      arr.delete(id)
+    } else {
+      arr.add(id)
+    }
+
+    toppingIds.value = [...arr]
+  }
+
+
+
+  return {
+    sizeId, size, selectSize,
+    toppingIds, toppings, toggleTopping, isToppingSelected, hasTopping
+  }
 })

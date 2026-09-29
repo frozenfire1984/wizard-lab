@@ -34,7 +34,7 @@ function nextStep() {
       {{ order.size?.title }}
     </div>
     <footer class="wizard-step__footer">
-      <button class="btn" @click="nextStep()" :disabled="!order.sizeId">Next</button>
+      <button class="btn" @click="nextStep" :disabled="!order.sizeId">Next</button>
     </footer>
   </div>
 </template>
@@ -62,5 +62,6 @@ function nextStep() {
 
 .selected {
   border-color: darkgreen;
+  box-shadow: 0 0 0 5px rgba(0, 255, 0, .2);
 }
 </style>

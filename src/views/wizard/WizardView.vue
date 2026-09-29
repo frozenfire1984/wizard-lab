@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import { useOrderStore } from '@/stores/order.ts'
+
+const order = useOrderStore()
 </script>
 
 <template>
@@ -11,6 +14,11 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink :to="{ name: 'wizard-delivery' }">Delivery</RouterLink>
         <RouterLink :to="{ name: 'wizard-confirm' }">Confirm</RouterLink>
       </nav>
+      <hr>
+      <pre>
+        {{ order.$state }}
+      </pre>
+
     </aside>
     <div class="wizard__body">
       <RouterView />
@@ -43,6 +51,10 @@ import { RouterLink, RouterView } from 'vue-router'
 :deep(.wizard-step) {
   display: flex;
   flex-direction: column;
+}
+
+:deep(.wizard-step__title) {
+  margin-bottom: 1em;
 }
 
 :deep(.wizard-step__body) {

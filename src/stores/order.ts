@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { SizeId, ToppingId } from '@/types/pizza.types.ts'
+import type { DeliveryMethod } from '@/types/delivery.types.ts'
 import { SIZES, TOPPINGS } from '@/wizard/menu.ts'
+import { DISCOUNT, MIN_PRICE_FOR_DISCOUNT, DELIVERY_PRICE } from '@/wizard/constants.ts'
 
 export const useOrderStore = defineStore('order', () => {
 
@@ -44,11 +46,34 @@ export const useOrderStore = defineStore('order', () => {
     toppingIds.value = [...arr]
   }
 
-  // Price
+  // Delivery
 
-  const discount = computed(() => {
-    return price.value > 1200 ? 300 : 0
+  const deliveryMethod = ref<DeliveryMethod>('pickup')
+
+  const deliveryPrice = computed(() => {
+    if (deliveryMethod.value === "courier") return DELIVERY_PRICE
+    return 0
   })
+
+  const firstName = ref("")
+
+  const lastName = ref("")
+
+  const phone = ref("")
+
+  const city = ref("")
+
+  const address = ref("")
+
+  const isDeliveryFilled = computed(() => {
+    if (deliveryMethod.value === "courier") {
+      return Boolean(firstName.value && phone.value && city.value && address.value)
+    }
+    return Boolean(firstName.value && phone.value)
+  })
+
+
+  // Price
 
   const price = computed(() => {
     const base = size.value?.price ?? 0
@@ -58,11 +83,16 @@ export const useOrderStore = defineStore('order', () => {
     return base + extra
   })
 
-  const totalPrice = computed(() => price.value - discount.value)
+  const discount = computed(() => {
+    return price.value > MIN_PRICE_FOR_DISCOUNT ? DISCOUNT : 0
+  })
+
+  const totalPrice = computed(() => price.value - discount.value + deliveryPrice.value)
 
   return {
     sizeId, size, selectSize,
     toppingIds, toppings, toggleTopping, isToppingSelected, hasTopping,
-    totalPrice, discount
+    totalPrice, discount,
+    deliveryMethod, deliveryPrice, firstName, lastName, phone, city, address, isDeliveryFilled
   }
 })

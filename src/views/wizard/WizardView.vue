@@ -20,9 +20,11 @@ const order = useOrderStore()
         Your discount: <strong :class="$style.discount">{{order.discount}}$</strong>
       </div>
       <hr />
-      <pre>
-        {{ order.$state }}
-      </pre>
+      <div class="debugger">
+        <pre>
+          {{ order.$state }}
+        </pre>
+      </div>
 
     </aside>
     <div class="wizard__body">
@@ -76,5 +78,16 @@ const order = useOrderStore()
 :deep(.wizard-step__footer) {
   display: flex;
   justify-content: end;
+}
+
+.debugger {
+  position: fixed;
+  inset: auto auto 0 0;
+  width: 500px;
+  overflow: auto;
+  padding: 10px;
+  border: 1px gray solid;
+  background-color: #fff;
+  font-size: 13px;
 }
 </style>

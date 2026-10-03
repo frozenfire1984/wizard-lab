@@ -14,7 +14,8 @@
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "sandbox" : "npx tsc src/sandbox/promise.ts --watch --target es2022 --ignoreConfig"
   },
   "dependencies": {
     "pinia": "^4.0.3",

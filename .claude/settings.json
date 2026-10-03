@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Edit(src/**)",
+      "Write(src/**)",
+      "Edit(e2e/**)",
+      "Write(e2e/**)"
+    ],
+    "allow": [
+      "Read",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git ls-tree*)",
+      "Bash(npm run type-check)",
+      "Bash(npm run lint)",
+      "Bash(cat*)",
+      "Bash(head*)",
+      "Bash(tail*)",
+      "Bash(ls*)",
+      "Bash(grep*)",
+      "Bash(sed -n*)",
+      "Bash(node -v)",
+      "Bash(npx tsc --version)"
+    ]
+  }
+}

@@ -89,6 +89,13 @@ export const useOrderStore = defineStore('order', () => {
 
   const totalPrice = computed(() => price.value - discount.value + deliveryPrice.value)
 
+
+
+  // Confirm
+
+
+
+
   return {
     sizeId, size, selectSize,
     toppingIds, toppings, toggleTopping, isToppingSelected, hasTopping,

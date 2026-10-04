@@ -5,28 +5,37 @@ function getRandomInt(min, max) {
 const promise = new Promise((resolve, reject) => {
     console.log('1. Start');
     setTimeout(() => {
-        console.log('3. Timer end');
+        //console.log('3. Timer end');
         const cast = getRandomInt(0, 10);
         if (cast >= 5) {
             resolve({
                 name: 'Yuri',
-                age: 41
+                age: 50,
             });
         }
         else {
-            reject({
-                name: "Failure"
-            });
+            reject(new Error('Failure'));
+            //throw new Error('Failure!')
         }
     }, 2000);
+    //throw new Error('Failure!!!');
 });
 console.log('2. Continue...');
 promise
     .then((result) => {
-    console.log('4.', result);
+    return result;
+})
+    .then((result) => {
+    //return result.name
+    return new Promise((resolve, reject) => {
+        resolve(result.name); // это тоже самое если бы мы просто сделали бы return result.name?
+    });
+})
+    .then((name) => {
+    console.log(name);
 })
     .catch((err) => {
-    console.warn('Error', err);
+    console.warn(err);
 })
     .finally(() => {
     console.info("Finish");

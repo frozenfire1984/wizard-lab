@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, toRaw } from 'vue'
 import type { SizeId, ToppingId } from '@/types/pizza.types.ts'
 import type { DeliveryMethod } from '@/types/delivery.types.ts'
 import { SIZES, TOPPINGS } from '@/wizard/menu.ts'
 import { DISCOUNT, MIN_PRICE_FOR_DISCOUNT, DELIVERY_PRICE } from '@/wizard/constants.ts'
+import type { RequestStatus } from '@/types/request.types.ts'
+import type { OrderState } from '@/types/orderState.types.ts'
+import { submitOrder } from '@/api/order.api.ts'
 
 export const useOrderStore = defineStore('order', () => {
 
@@ -92,14 +95,30 @@ export const useOrderStore = defineStore('order', () => {
 
 
   // Confirm
+  const submitStatus = ref<RequestStatus>('idle')
 
-
+  function submit(orderState: OrderState) {
+    submitStatus.value = 'loading'
+    submitOrder(orderState)
+      .then((r) => {
+        submitStatus.value = 'success'
+        console.log(r)
+      })
+      .catch((err) => {
+        submitStatus.value = 'error'
+        console.warn(err)
+      })
+      .finally(() => {
+        console.info("finish!")
+      })
+  }
 
 
   return {
     sizeId, size, selectSize,
     toppingIds, toppings, toggleTopping, isToppingSelected, hasTopping,
     totalPrice, discount,
-    deliveryMethod, deliveryPrice, firstName, lastName, phone, city, address, isDeliveryFilled
+    deliveryMethod, deliveryPrice, firstName, lastName, phone, city, address, isDeliveryFilled,
+    submitStatus, submit
   }
 })

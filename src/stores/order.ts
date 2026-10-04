@@ -6,7 +6,7 @@ import { SIZES, TOPPINGS } from '@/wizard/menu.ts'
 import { DISCOUNT, MIN_PRICE_FOR_DISCOUNT, DELIVERY_PRICE } from '@/wizard/constants.ts'
 import type { RequestStatus } from '@/types/request.types.ts'
 import type { OrderState } from '@/types/orderState.types.ts'
-import { submitOrder } from '@/api/order.api.ts'
+import { submitOrderApi } from '@/api/order.api.ts'
 
 export const useOrderStore = defineStore('order', () => {
 
@@ -95,30 +95,51 @@ export const useOrderStore = defineStore('order', () => {
 
 
   // Confirm
-  const submitStatus = ref<RequestStatus>('idle')
 
-  function submit(orderState: OrderState) {
-    submitStatus.value = 'loading'
-    submitOrder(orderState)
-      .then((r) => {
-        submitStatus.value = 'success'
-        console.log(r)
-      })
-      .catch((err) => {
-        submitStatus.value = 'error'
-        console.warn(err)
-      })
-      .finally(() => {
-        console.info("finish!")
-      })
+  function buildOrder():OrderState {
+    return {
+      sizeId: sizeId.value,
+      toppingIds: [...toppingIds.value],
+      deliveryMethod: deliveryMethod.value,
+      firstName: firstName.value,
+      lastName: lastName.value,
+      phone: phone.value,
+      city: city.value,
+      address: address.value,
+    }
   }
 
+  const orderRequestId = ref("")
+
+  const checkoutStatus = ref<RequestStatus>('idle')
+
+  function checkout() {
+    checkoutStatus.value = 'loading'
+
+    submitOrderApi(buildOrder())
+      .then((r) => {
+
+        console.log("returned data")
+        console.log(r)
+
+        checkoutStatus.value = 'success'
+        orderRequestId.value = r.orderId || ""
+        //console.log(r)
+      })
+      .catch((err) => {
+        checkoutStatus.value = 'error'
+        console.error(err)
+      })
+      .finally(() => {
+        //console.info("finish!")
+      })
+  }
 
   return {
     sizeId, size, selectSize,
     toppingIds, toppings, toggleTopping, isToppingSelected, hasTopping,
     totalPrice, discount,
     deliveryMethod, deliveryPrice, firstName, lastName, phone, city, address, isDeliveryFilled,
-    submitStatus, submit
+    orderRequestId, checkoutStatus, checkout
   }
 })

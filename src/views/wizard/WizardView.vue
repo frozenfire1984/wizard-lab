@@ -19,8 +19,12 @@ const order = useOrderStore()
       <div v-if="order.discount">
         Your discount: <strong :class="$style.discount">{{order.discount}}$</strong>
       </div>
+
+      <div v-if="order.checkoutStatus === 'success'" :class="$style.susBadge">
+        Order {{ order.orderRequestId }} created!
+      </div>
       <hr />
-      <div class="debugger">
+      <div class="debugger" hidden="">
         <pre>
           {{ order.$state }}
         </pre>
@@ -38,6 +42,14 @@ const order = useOrderStore()
   color: red;
 }
 
+.susBadge {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: green;
+  color: #fff;
+  border-radius: 8px;
+}
+
 </style>
 
 <style scoped lang="scss">
@@ -47,6 +59,7 @@ const order = useOrderStore()
   block-size: 100%;
 
   &__aside {
+    padding-right: 8px;
     border-right: 1px var(--pl-border-color) solid;
   }
 

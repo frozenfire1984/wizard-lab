@@ -10,9 +10,13 @@ export function submitOrderApi(orderPayload: OrderState): Promise<SubmitOrderRes
   }
 
   let res
+  const alwaysSus = true
+  let randomFloat = 0.5
+
+  if (alwaysSus) randomFloat = 1
 
   // for testing! when laravel/node backend implemented, this condition will remove
-  if (Math.random() < 0.5) {
+  if (Math.random() < randomFloat) {
     res = fetch('https://httpbin.org/delay/5', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -32,7 +36,7 @@ export function submitOrderApi(orderPayload: OrderState): Promise<SubmitOrderRes
     })
     .then((body) => {
       console.log(body)
-      return JSON.parse(body.data)
+      return JSON.parse(body.data) // need remove when we will use real api
     })
     .then((data) => {
       console.log(data)

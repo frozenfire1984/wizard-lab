@@ -14,6 +14,12 @@ hr {
   opacity: 0.2;
 }
 
+.btn-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .btn {
   display: inline-flex;
   width: fit-content;

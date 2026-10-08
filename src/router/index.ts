@@ -5,6 +5,7 @@ import StepSize from '@/views/wizard/StepSize.vue'
 import StepToppings from '@/views/wizard/StepToppings.vue'
 import StepDelivery from '@/views/wizard/StepDelivery.vue'
 import StepConfirm from '@/views/wizard/StepConfirm.vue'
+import ArchiveView from '@/views/ArchiveView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +42,13 @@ const router = createRouter({
           component: StepConfirm,
         },
       ],
+    },
+
+
+    {
+      path: '/archive',
+      name: 'archive',
+      component: ArchiveView,
     },
   ],
 })

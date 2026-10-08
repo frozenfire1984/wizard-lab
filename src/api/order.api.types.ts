@@ -1,7 +1,7 @@
 import type { OrderState } from '@/types/orderState.types.ts'
 
-type Timestamp = number
-type UUIDString = string
+export type Timestamp = number | null
+export type UUIDString = string
 
 export interface SubmitOrderPayload {
   orderId: UUIDString,

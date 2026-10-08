@@ -8,6 +8,7 @@ export interface AppRouteMap {
   'wizard-toppings': RouteRecordInfo<'wizard-toppings', '/wizard/toppings', Record<never, never>, Record<never, never>>,
   'wizard-delivery': RouteRecordInfo<'wizard-delivery', '/wizard/delivery', Record<never, never>, Record<never, never>>,
   'wizard-confirm': RouteRecordInfo<'wizard-confirm', '/wizard/confirm', Record<never, never>, Record<never, never>>,
+  'archive': RouteRecordInfo<'archive', '/archive', Record<never, never>, Record<never, never>>,
 }
 
 declare module 'vue-router' {

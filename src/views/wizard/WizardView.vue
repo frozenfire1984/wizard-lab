@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { useOrderStore } from '@/stores/order.ts'
+import { computed } from 'vue'
 
 const order = useOrderStore()
+
+const date = computed(() => {
+  if (order.orderRequestData) {
+    return new Date(order.orderRequestData).toLocaleString();
+  } else {
+    return null
+  }
+})
 </script>
 
 <template>
@@ -21,7 +30,8 @@ const order = useOrderStore()
       </div>
 
       <div v-if="order.checkoutStatus === 'success'" :class="$style.susBadge">
-        Order {{ order.orderRequestId }} created!
+        Order {{ order.orderRequestId }} created at <br>
+        {{ date }}!
       </div>
       <hr />
       <div class="debugger" hidden="">

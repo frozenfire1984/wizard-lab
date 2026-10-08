@@ -6,7 +6,10 @@ import { SIZES, TOPPINGS } from '@/wizard/menu.ts'
 import { DISCOUNT, MIN_PRICE_FOR_DISCOUNT, DELIVERY_PRICE } from '@/wizard/constants.ts'
 import type { RequestStatus } from '@/types/request.types.ts'
 import type { OrderState } from '@/types/orderState.types.ts'
+import type { Timestamp, UUIDString } from '@/api/order.api.types.ts'
+import type { ArchiveOrder } from '@/types/archive.types.ts'
 import { submitOrderApi } from '@/api/order.api.ts'
+import { useArchiveStore } from '@/stores/archive.ts'
 
 export const useOrderStore = defineStore('order', () => {
 
@@ -96,6 +99,23 @@ export const useOrderStore = defineStore('order', () => {
 
   // Confirm
 
+  const orderRequestId = ref<UUIDString>("")
+  const orderRequestData = ref<Timestamp>(null)
+  const checkoutStatus = ref<RequestStatus>('idle')
+  //const builtOrderItem = ref<OrderState | null>(null)
+  //const builtOrderItemForArchive = ref<ArchiveOrder | null>(null)
+
+  function clear() {
+    sizeId.value = null
+    toppingIds.value = []
+    deliveryMethod.value = "pickup"
+    firstName.value = ""
+    lastName.value = ""
+    phone.value = ""
+    city.value = ""
+    address.value = ""
+  }
+
   function buildOrder():OrderState {
     return {
       sizeId: sizeId.value,
@@ -109,14 +129,18 @@ export const useOrderStore = defineStore('order', () => {
     }
   }
 
-  const orderRequestId = ref("")
-
-  const checkoutStatus = ref<RequestStatus>('idle')
+  function resetCheckoutStatus() {
+    checkoutStatus.value = 'idle'
+  }
 
   function checkout() {
     checkoutStatus.value = 'loading'
 
-    submitOrderApi(buildOrder())
+    const builtOrderItem = buildOrder()
+
+    const archive = useArchiveStore()
+
+    submitOrderApi(builtOrderItem)
       .then((r) => {
 
         console.log("returned data")
@@ -124,6 +148,16 @@ export const useOrderStore = defineStore('order', () => {
 
         checkoutStatus.value = 'success'
         orderRequestId.value = r.orderId || ""
+        orderRequestData.value = r.date || null
+
+        const builtOrderItemForArchive: ArchiveOrder = {
+          ...builtOrderItem,
+          orderId: orderRequestId.value,
+          date: orderRequestData.value
+        }
+
+        archive.addItem(builtOrderItemForArchive)
+        clear()
         //console.log(r)
       })
       .catch((err) => {
@@ -140,6 +174,6 @@ export const useOrderStore = defineStore('order', () => {
     toppingIds, toppings, toggleTopping, isToppingSelected, hasTopping,
     totalPrice, discount,
     deliveryMethod, deliveryPrice, firstName, lastName, phone, city, address, isDeliveryFilled,
-    orderRequestId, checkoutStatus, checkout
+    orderRequestId, orderRequestData, checkoutStatus, checkout, resetCheckoutStatus
   }
 })

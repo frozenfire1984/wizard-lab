@@ -23,7 +23,8 @@ function nextStep() {
 
       <ul :class="$style.items">
         <li
-          :class="[$style.item, { [$style.selected]: order.isToppingSelected(item.id)}]" v-for="item in TOPPINGS"
+          v-for="item in TOPPINGS"
+          :class="[$style.item, { [$style.selected]: order.isToppingSelected(item.id)}]"
           :key="item.id">
           <strong>{{ item.title }}</strong>
           <div :class="$style.price">

@@ -1,7 +1,9 @@
 import type { SizeId, ToppingId } from '@/types/pizza.types.ts'
 import type { DeliveryMethod } from '@/types/delivery.types.ts'
 
-export interface OrderState {
+export type Price = number;
+
+export interface OrderDraft {
   sizeId: SizeId | null,
   toppingIds: ToppingId[],
   deliveryMethod: DeliveryMethod,
@@ -10,4 +12,9 @@ export interface OrderState {
   phone: string,
   city?: string,
   address?: string
+}
+
+export interface OrderFinal extends OrderDraft {
+  sizeId: SizeId,
+  price: Price
 }

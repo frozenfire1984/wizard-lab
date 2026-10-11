@@ -31,7 +31,8 @@ const date = computed(() => {
 
       <div v-if="order.checkoutStatus === 'success'" :class="$style.susBadge">
         Order {{ order.orderRequestId }} created at <br>
-        {{ date }}!
+        {{ date }}! <hr />
+        Price: {{ order.orderPrice }}$
       </div>
       <hr />
       <div class="debugger" hidden="">

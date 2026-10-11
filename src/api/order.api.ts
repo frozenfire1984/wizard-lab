@@ -1,7 +1,7 @@
-import type { OrderState } from '@/types/orderState.types.ts'
+import type { OrderFinal } from '@/types/order.types.ts'
 import type { SubmitOrderPayload, SubmitOrderResponse, SubmitOrderResponseErr } from '@/api/order.api.types.ts'
 
-export function submitOrderApi(orderPayload: OrderState): Promise<SubmitOrderResponse> {
+export function submitOrderApi(orderPayload: OrderFinal): Promise<SubmitOrderResponse> {
   const finalPayload: SubmitOrderPayload = {
     orderId: crypto.randomUUID(),
     date: Date.now(),
@@ -44,6 +44,7 @@ export function submitOrderApi(orderPayload: OrderState): Promise<SubmitOrderRes
       return {
         orderId: data.orderId,
         date: data.date,
+        price: data.order.price,
       }
     })
     .catch((err) => {

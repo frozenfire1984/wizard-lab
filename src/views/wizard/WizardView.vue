@@ -6,8 +6,8 @@ import { computed } from 'vue'
 const order = useOrderStore()
 
 const date = computed(() => {
-  if (order.orderRequestData) {
-    return new Date(order.orderRequestData).toLocaleString();
+  if (order.response?.date) {
+    return new Date(order.response.date).toLocaleString();
   } else {
     return null
   }
@@ -24,23 +24,23 @@ const date = computed(() => {
         <RouterLink :to="{ name: 'wizard-confirm' }">Confirm</RouterLink>
       </nav>
       <hr />
-      Total price: <strong>{{ order.totalPrice }}$</strong>
+      Total price: <strong>{{ order.totalPrice || order.response?.price }}$</strong>
       <div v-if="order.discount">
         Your discount: <strong :class="$style.discount">{{order.discount}}$</strong>
       </div>
 
       <div v-if="order.checkoutStatus === 'success'" :class="$style.susBadge">
-        Order {{ order.orderRequestId }} created at <br>
+        Order {{ order.response?.orderId }} created at <br>
         {{ date }}! <hr />
-        Price: {{ order.orderPrice }}$
+        Price: {{ order.response?.price }}$
       </div>
       <hr />
-      <div class="debugger" hidden="">
+      <div class="debugger">
         <pre>
-          {{ order.$state }}
+          Draft:
+          {{ order.draft }}
         </pre>
       </div>
-
     </aside>
     <div class="wizard__body">
       <RouterView />
@@ -107,7 +107,7 @@ const date = computed(() => {
 .debugger {
   position: fixed;
   inset: auto auto 0 0;
-  width: 500px;
+  width: fit-content;
   overflow: auto;
   padding: 10px;
   border: 1px gray solid;

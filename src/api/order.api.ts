@@ -1,5 +1,5 @@
 import type { OrderFinal } from '@/types/order.types.ts'
-import type { SubmitOrderPayload, SubmitOrderResponse, SubmitOrderResponseErr } from '@/api/order.api.types.ts'
+import type { SubmitOrderPayload, SubmitOrderResponse } from '@/api/order.api.types.ts'
 
 export function submitOrderApi(orderPayload: OrderFinal): Promise<SubmitOrderResponse> {
   const finalPayload: SubmitOrderPayload = {
@@ -40,7 +40,6 @@ export function submitOrderApi(orderPayload: OrderFinal): Promise<SubmitOrderRes
     })
     .then((data) => {
       console.log(data)
-
       return {
         orderId: data.orderId,
         date: data.date,

@@ -1,47 +1,56 @@
 import { defineStore } from 'pinia'
-import { ref, computed, toRaw } from 'vue'
+import { ref, computed } from 'vue'
 import type { SizeId, ToppingId } from '@/types/pizza.types.ts'
-import type { DeliveryMethod } from '@/types/delivery.types.ts'
 import { SIZES, TOPPINGS } from '@/wizard/menu.ts'
 import { DISCOUNT, MIN_PRICE_FOR_DISCOUNT, DELIVERY_PRICE } from '@/wizard/constants.ts'
 import type { RequestStatus } from '@/types/request.types.ts'
-import type { OrderFinal, Price } from '@/types/order.types.ts'
-import type { Timestamp, UUIDString } from '@/api/order.api.types.ts'
+import type { OrderFinal, OrderDraft } from '@/types/order.types.ts'
+import type { SubmitOrderResponse } from '@/api/order.api.types.ts'
 import type { ArchiveOrder } from '@/types/archive.types.ts'
 import { submitOrderApi } from '@/api/order.api.ts'
 import { useArchiveStore } from '@/stores/archive.ts'
 
 export const useOrderStore = defineStore('order', () => {
 
-  // Size
-  const sizeId = ref<SizeId | null>(null)
+  function emptyDraft():OrderDraft {
+    return {
+      sizeId: null,
+      toppingIds: [],
+      deliveryMethod: 'pickup',
+      firstName: "",
+      lastName: "",
+      phone: "",
+      city: "",
+      address: "",
+    }
+  }
 
+  const draft = ref<OrderDraft>(emptyDraft())
+
+  // Size
   const size = computed(() => {
-    return SIZES.find((s) => s.id === sizeId.value)
+    return SIZES.find((s) => s.id === draft.value.sizeId)
   })
 
   function selectSize(id: SizeId) {
-    sizeId.value = id
+    draft.value.sizeId = id
   }
 
-
   // Topping
-  const toppingIds = ref<ToppingId[]>([])
-
   const toppings = computed(() => {
-    return TOPPINGS.filter((s) => toppingIds.value.includes(s.id))
+    return TOPPINGS.filter((s) => draft.value.toppingIds.includes(s.id))
   })
 
   const hasTopping = computed(() => {
-    return toppingIds.value.length > 0
+    return draft.value.toppingIds.length > 0
   })
   
   function isToppingSelected(id: ToppingId) {
-    return toppingIds.value.includes(id)
+    return draft.value.toppingIds.includes(id)
   }
 
   function toggleTopping(id: ToppingId) {
-    const arr = new Set(toppingIds.value)
+    const arr = new Set(draft.value.toppingIds)
 
     if (arr.has(id)) {
       arr.delete(id)
@@ -49,38 +58,23 @@ export const useOrderStore = defineStore('order', () => {
       arr.add(id)
     }
 
-    toppingIds.value = [...arr]
+    draft.value.toppingIds = [...arr]
   }
 
   // Delivery
-
-  const deliveryMethod = ref<DeliveryMethod>('pickup')
-
   const deliveryPrice = computed(() => {
-    if (deliveryMethod.value === "courier") return DELIVERY_PRICE
+    if (draft.value.deliveryMethod === "courier") return DELIVERY_PRICE
     return 0
   })
 
-  const firstName = ref("")
-
-  const lastName = ref("")
-
-  const phone = ref("")
-
-  const city = ref("")
-
-  const address = ref("")
-
   const isDeliveryFilled = computed(() => {
-    if (deliveryMethod.value === "courier") {
-      return Boolean(firstName.value && phone.value && city.value && address.value)
+    if (draft.value.deliveryMethod === "courier") {
+      return Boolean(draft.value.firstName && draft.value.phone && draft.value.city && draft.value.address)
     }
-    return Boolean(firstName.value && phone.value)
+    return Boolean(draft.value.firstName && draft.value.phone)
   })
 
-
   // Price
-
   const price = computed(() => {
     const base = size.value?.price ?? 0
     const extra = toppings.value.reduce((sum, t) => {
@@ -95,41 +89,24 @@ export const useOrderStore = defineStore('order', () => {
 
   const totalPrice = computed(() => price.value - discount.value + deliveryPrice.value)
 
-
-
   // Confirm
+  const response = ref<SubmitOrderResponse | null>(null)
 
-  const orderRequestId = ref<UUIDString>("")
-  const orderRequestData = ref<Timestamp>(null)
-  const orderPrice = ref<Price>(0)
   const checkoutStatus = ref<RequestStatus>('idle')
-  //const builtOrderItem = ref<OrderDraft | null>(null)
-  //const builtOrderItemForArchive = ref<ArchiveOrder | null>(null)
 
-  function clear() {
-    sizeId.value = null
-    toppingIds.value = []
-    deliveryMethod.value = "pickup"
-    firstName.value = ""
-    lastName.value = ""
-    phone.value = ""
-    city.value = ""
-    address.value = ""
+  function clearOrder() {
+    draft.value = emptyDraft()
   }
 
-  function buildOrder():OrderFinal | null {
+  function buildOrder():OrderFinal {
 
-    if (!sizeId.value) return null
+    if (draft.value.sizeId === null) throw new Error('buildOrder: sizeId not exist')
 
     return {
-      sizeId: sizeId.value,
-      toppingIds: [...toppingIds.value],
-      deliveryMethod: deliveryMethod.value,
-      firstName: firstName.value,
-      lastName: lastName.value,
-      phone: phone.value,
-      city: city.value,
-      address: address.value,
+      ...draft.value,
+      sizeId: draft.value.sizeId,
+      city: draft.value.deliveryMethod === 'pickup' ? "" : draft.value.city,
+      address: draft.value.deliveryMethod === 'pickup' ? "" : draft.value.address,
       price: totalPrice.value, // temporarily! When real backend will be done, this field has been replaced. We will get price form api
     }
   }
@@ -141,32 +118,24 @@ export const useOrderStore = defineStore('order', () => {
   function checkout() {
     checkoutStatus.value = 'loading'
 
-    const builtOrderItem = buildOrder()
-
-    if (builtOrderItem === null || builtOrderItem === undefined) return
-
     const archive = useArchiveStore()
 
-    submitOrderApi(builtOrderItem)
-      .then((r) => {
+    const builtOrder = buildOrder()
 
-        console.log("returned data")
-        console.log(r)
-
+    submitOrderApi(builtOrder)
+      .then((resp) => {
         checkoutStatus.value = 'success'
-        orderRequestId.value = r.orderId || ""
-        orderRequestData.value = r.date || null
-        orderPrice.value = r.price || 0
+        response.value = resp
 
-        const builtOrderItemForArchive: ArchiveOrder = {
-          ...builtOrderItem,
-          orderId: orderRequestId.value,
-          date: orderRequestData.value,
+        const orderArchive: ArchiveOrder = {
+          ...builtOrder,
+          orderId: resp.orderId,
+          date: resp.date,
+          priceFromServer: resp.price,
         }
 
-        archive.addItem(builtOrderItemForArchive)
-        clear()
-        //console.log(r)
+        archive.addItem(orderArchive)
+        clearOrder()
       })
       .catch((err) => {
         checkoutStatus.value = 'error'
@@ -178,10 +147,9 @@ export const useOrderStore = defineStore('order', () => {
   }
 
   return {
-    sizeId, size, selectSize,
-    toppingIds, toppings, toggleTopping, isToppingSelected, hasTopping,
-    totalPrice, discount,
-    deliveryMethod, deliveryPrice, firstName, lastName, phone, city, address, isDeliveryFilled,
-    orderRequestId, orderRequestData, orderPrice, checkoutStatus, checkout, resetCheckoutStatus
+    draft, size, selectSize,
+    toppings, toggleTopping, isToppingSelected, hasTopping,
+    totalPrice, discount, deliveryPrice, isDeliveryFilled,
+    response, checkoutStatus, checkout, resetCheckoutStatus
   }
 })

@@ -19,7 +19,7 @@ function nextStep() {
       <ul :class="$style.items">
         <li
           v-for="size in SIZES"
-          :class="[$style.item, { [$style.selected]: size.id === order.sizeId }]"
+          :class="[$style.item, { [$style.selected]: size.id === order.draft.sizeId }]"
           :key="size.id"
         >
           <div>
@@ -34,7 +34,7 @@ function nextStep() {
       {{ order.size?.title }}
     </div>
     <footer class="wizard-step__footer">
-      <button class="btn" @click="nextStep" :disabled="!order.sizeId">Next</button>
+      <button class="btn" @click="nextStep" :disabled="!order.draft.sizeId">Next</button>
     </footer>
   </div>
 </template>

@@ -1,4 +1,4 @@
-import type { OrderDraft } from '@/types/order.types.ts'
+import type { OrderFinal } from '@/types/order.types.ts'
 import type { Price } from '@/types/order.types.ts'
 
 export type Timestamp = number | null
@@ -8,7 +8,7 @@ export interface SubmitOrderPayload {
   orderId: UUIDString,
   date: Timestamp,
   userAgent: string,
-  order: OrderDraft
+  order: OrderFinal,
 }
 
 export interface SubmitOrderResponse {
@@ -17,7 +17,3 @@ export interface SubmitOrderResponse {
   price: Price
 }
 
-export interface SubmitOrderResponseErr {
-  status : "error",
-  errorText : string
-}

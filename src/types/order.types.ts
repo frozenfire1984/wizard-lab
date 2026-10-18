@@ -8,13 +8,25 @@ export interface OrderDraft {
   toppingIds: ToppingId[],
   deliveryMethod: DeliveryMethod,
   firstName: string,
-  lastName?: string,
+  lastName: string,
   phone: string,
-  city?: string,
-  address?: string
+  city: string,
+  address: string
 }
 
-export interface OrderFinal extends OrderDraft {
+interface OrderBase {
   sizeId: SizeId,
-  price: Price
+  toppingIds: ToppingId[],
+  firstName: string,
+  lastName: string,
+  phone: string,
+  price: Price,
 }
+
+export type OrderFinal =
+  | (OrderBase & { deliveryMethod: 'pickup' })
+  | (OrderBase & { deliveryMethod: 'courier'; city: string; address: string })
+
+
+
+

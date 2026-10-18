@@ -18,11 +18,11 @@ function nextStep() {
       <form action="" class="form-container">
         <div class="form-radio-group">
           <label for="pickup" class="radio-item">
-            <input v-model="order.deliveryMethod" type="radio" value="pickup" name="deliveryMethod" id="pickup" />
+            <input v-model="order.draft.deliveryMethod" type="radio" value="pickup" name="deliveryMethod" id="pickup" />
             Pickup
           </label>
           <label for="courier" class="radio-item">
-            <input v-model="order.deliveryMethod" type="radio" value="courier" name="deliveryMethod" id="courier"  />
+            <input v-model="order.draft.deliveryMethod" type="radio" value="courier" name="deliveryMethod" id="courier"  />
             Courier
           </label>
         </div>
@@ -30,7 +30,7 @@ function nextStep() {
         <div class="form-item">
           <label for="firstName" class="form-label">First Name *</label>
           <input
-            v-model="order.firstName"
+            v-model="order.draft.firstName"
             required
             class="form-input"
             type="text"
@@ -49,7 +49,7 @@ function nextStep() {
         <div class="form-item">
           <label for="lastName" class="form-label">Last Name</label>
           <input
-            v-model="order.lastName"
+            v-model="order.draft.lastName"
             class="form-input"
             type="text"
             name="lastName"
@@ -68,7 +68,7 @@ function nextStep() {
         <div class="form-item">
           <label for="phone" class="form-label">Phone *</label>
           <input
-            v-model="order.phone"
+            v-model="order.draft.phone"
             required class="form-input"
             type="text"
             name="phone"
@@ -82,11 +82,11 @@ function nextStep() {
           </datalist>
         </div>
 
-        <template v-if="order.deliveryMethod === 'courier'">
+        <template v-if="order.draft.deliveryMethod === 'courier'">
           <div class="form-item">
             <label for="city" class="form-label">City</label>
             <input
-              v-model="order.city"
+              v-model="order.draft.city"
               required
               class="form-input"
               type="text"
@@ -105,7 +105,7 @@ function nextStep() {
           <div class="form-item">
             <label for="city" class="form-label">Address</label>
             <textarea
-              v-model="order.address"
+              v-model="order.draft.address"
               required
               class="form-textarea"
               name="address"

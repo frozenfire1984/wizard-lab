@@ -12,7 +12,9 @@ const archive = useArchiveStore()
       <div>
         <ul>
           <li v-for="item in archive.items" :key="item.orderId">
-            {{ item }}
+            <pre>
+              {{ item }}
+            </pre>
           </li>
         </ul>
       </div>

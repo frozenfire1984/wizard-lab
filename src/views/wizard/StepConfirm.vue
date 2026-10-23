@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useOrderStore } from '@/stores/order.ts'
 import { computed } from 'vue'
+import { useOrderStore } from '@/stores/order.ts'
 import { useRouter } from 'vue-router'
 
 const order = useOrderStore()
@@ -31,8 +31,6 @@ function goToNewOrder () {
       <div v-if="order.checkoutStatus === 'loading'" :class="$style.send">Order sending...</div>
       <div v-if="order.checkoutStatus === 'error'" :class="$style.err">Error order!</div>
       <div v-if="order.checkoutStatus === 'success'" :class="$style.sus">Order complete!</div>
-
-
     </div>
   </div>
 </template>
@@ -49,5 +47,4 @@ function goToNewOrder () {
 .sus {
   color: green;
 }
-
 </style>

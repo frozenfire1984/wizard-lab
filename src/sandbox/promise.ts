@@ -36,7 +36,7 @@ promise
   })
   .then((result) => {
     //return result.name
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<string>((resolve, _reject) => {
       resolve(result.name)   // это тоже самое если бы мы просто сделали бы return result.name?
     })
   })

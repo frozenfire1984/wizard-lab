@@ -21,5 +21,3 @@ const archive = useArchiveStore()
     </article>
   </section>
 </template>
-
-<style scoped lang="scss"></style>

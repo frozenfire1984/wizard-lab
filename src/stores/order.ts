@@ -1,29 +1,19 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { SizeId, ToppingId } from '@/types/pizza.types.ts'
-import { SIZES, TOPPINGS } from '@/wizard/menu.ts'
-import { DISCOUNT, MIN_PRICE_FOR_DISCOUNT, DELIVERY_PRICE } from '@/wizard/constants.ts'
-import type { RequestStatus } from '@/types/request.types.ts'
-import type { OrderFinal, OrderDraft } from '@/types/order.types.ts'
-import type { SubmitOrderResponse } from '@/api/order.api.types.ts'
-import type { ArchiveOrder } from '@/types/archive.types.ts'
+import { SIZES } from '@/wizard/menu.ts'
+import { DISCOUNT, MIN_PRICE_FOR_DISCOUNT } from '@/wizard/constants.ts'
 import { submitOrderApi } from '@/api/order.api.ts'
 import { useArchiveStore } from '@/stores/archive.ts'
+import { useDeliverySection } from '@/stores/order/useDeliverySection.ts'
+import { emptyDraft, buildOrder } from '@/wizard/order.factory.ts'
+import type { SizeId } from '@/types/pizza.types.ts'
+import type { RequestStatus } from '@/types/request.types.ts'
+import type { OrderDraft } from '@/types/order.types.ts'
+import type { SubmitOrderResponse } from '@/api/order.api.types.ts'
+import type { ArchiveOrder } from '@/types/archive.types.ts'
+import { useToppingSection } from '@/stores/order/useToppingSection.ts'
 
 export const useOrderStore = defineStore('order', () => {
-
-  function emptyDraft():OrderDraft {
-    return {
-      sizeId: null,
-      toppingIds: [],
-      deliveryMethod: 'pickup',
-      firstName: "",
-      lastName: "",
-      phone: "",
-      city: "",
-      address: "",
-    }
-  }
 
   const draft = ref<OrderDraft>(emptyDraft())
 
@@ -37,47 +27,15 @@ export const useOrderStore = defineStore('order', () => {
   }
 
   // Topping
-  const toppings = computed(() => {
-    return TOPPINGS.filter((s) => draft.value.toppingIds.includes(s.id))
-  })
-
-  const hasTopping = computed(() => {
-    return draft.value.toppingIds.length > 0
-  })
-  
-  function isToppingSelected(id: ToppingId) {
-    return draft.value.toppingIds.includes(id)
-  }
-
-  function toggleTopping(id: ToppingId) {
-    const arr = new Set(draft.value.toppingIds)
-
-    if (arr.has(id)) {
-      arr.delete(id)
-    } else {
-      arr.add(id)
-    }
-
-    draft.value.toppingIds = [...arr]
-  }
+  const topping = useToppingSection(draft)
 
   // Delivery
-  const deliveryPrice = computed(() => {
-    if (draft.value.deliveryMethod === "courier") return DELIVERY_PRICE
-    return 0
-  })
-
-  const isDeliveryFilled = computed(() => {
-    if (draft.value.deliveryMethod === "courier") {
-      return Boolean(draft.value.firstName && draft.value.phone && draft.value.city && draft.value.address)
-    }
-    return Boolean(draft.value.firstName && draft.value.phone)
-  })
+  const delivery = useDeliverySection(draft)
 
   // Price
   const price = computed(() => {
     const base = size.value?.price ?? 0
-    const extra = toppings.value.reduce((sum, t) => {
+    const extra = topping.items.value.reduce((sum, t) => {
       return sum + t.price
     }, 0)
     return base + extra
@@ -87,7 +45,7 @@ export const useOrderStore = defineStore('order', () => {
     return price.value > MIN_PRICE_FOR_DISCOUNT ? DISCOUNT : 0
   })
 
-  const totalPrice = computed(() => price.value - discount.value + deliveryPrice.value)
+  const totalPrice = computed(() => price.value - discount.value + delivery.price.value)
 
   // Confirm
   const response = ref<SubmitOrderResponse | null>(null)
@@ -96,19 +54,6 @@ export const useOrderStore = defineStore('order', () => {
 
   function clearOrder() {
     draft.value = emptyDraft()
-  }
-
-  function buildOrder():OrderFinal {
-
-    if (draft.value.sizeId === null) throw new Error('buildOrder: sizeId not exist')
-
-    return {
-      ...draft.value,
-      sizeId: draft.value.sizeId,
-      city: draft.value.deliveryMethod === 'pickup' ? "" : draft.value.city,
-      address: draft.value.deliveryMethod === 'pickup' ? "" : draft.value.address,
-      price: totalPrice.value, // temporarily! When real backend will be done, this field has been replaced. We will get price form api
-    }
   }
 
   function resetCheckoutStatus() {
@@ -120,7 +65,7 @@ export const useOrderStore = defineStore('order', () => {
 
     const archive = useArchiveStore()
 
-    const builtOrder = buildOrder()
+    const builtOrder = buildOrder(draft.value, totalPrice.value)
 
     submitOrderApi(builtOrder)
       .then((resp) => {
@@ -141,15 +86,11 @@ export const useOrderStore = defineStore('order', () => {
         checkoutStatus.value = 'error'
         console.error(err)
       })
-      .finally(() => {
-        //console.info("finish!")
-      })
   }
 
   return {
-    draft, size, selectSize,
-    toppings, toggleTopping, isToppingSelected, hasTopping,
-    totalPrice, discount, deliveryPrice, isDeliveryFilled,
+    draft, size, selectSize, topping,
+    totalPrice, discount, delivery,
     response, checkoutStatus, checkout, resetCheckoutStatus
   }
 })

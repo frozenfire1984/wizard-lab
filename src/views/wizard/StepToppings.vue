@@ -24,18 +24,18 @@ function nextStep() {
       <ul :class="$style.items">
         <li
           v-for="item in TOPPINGS"
-          :class="[$style.item, { [$style.selected]: order.isToppingSelected(item.id)}]"
+          :class="[$style.item, { [$style.selected]: order.topping.isSelected(item.id)}]"
           :key="item.id">
           <strong>{{ item.title }}</strong>
           <div :class="$style.price">
             <strong>Price:</strong> {{ item.price }}$
           </div>
-          <button class="btn" @click="order.toggleTopping(item.id)">Add</button>
+          <button class="btn" @click="order.topping.toggle(item.id)">Add</button>
         </li>
       </ul>
     </div>
     <footer class="wizard-step__footer">
-      <button class="btn" :disabled="!order.hasTopping" @click="nextStep">Next</button>
+      <button class="btn" :disabled="!order.topping.noEmpty" @click="nextStep">Next</button>
     </footer>
   </div>
 </template>
@@ -66,9 +66,4 @@ function nextStep() {
   border-color: darkgreen;
   box-shadow: 0 0 0 5px rgba(0, 255, 0, .2);
 }
-</style>
-
-<style scoped>
-
-
 </style>

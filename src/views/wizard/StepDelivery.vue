@@ -116,15 +116,13 @@ function nextStep() {
           </div>
         </template>
 
-        <div v-if="order.deliveryPrice">
-          Delivery price: <strong>{{ order.deliveryPrice }}$</strong>
+        <div v-if="order.delivery.price">
+          Delivery price: <strong>{{ order.delivery.price }}$</strong>
         </div>
       </form>
     </div>
     <footer class="wizard-step__footer">
-      <button class="btn" :disabled="!order.isDeliveryFilled" @click="nextStep">Next</button>
+      <button class="btn" :disabled="!order.delivery.isFilled" @click="nextStep">Next</button>
     </footer>
   </div>
 </template>
-
-<style scoped lang="scss"></style>

@@ -27,11 +27,11 @@ function nextStep() {
           </div>
           <div><strong>Diameter:</strong> {{ size.diameter }}cm</div>
           <div><strong>Price:</strong> {{ size.price }}$</div>
-          <button class="btn" @click="order.selectSize(size.id)">Choice</button>
+          <button class="btn" @click="order.size.select(size.id)">Choice</button>
         </li>
       </ul>
       <hr />
-      {{ order.size?.title }}
+      {{ order.size?.selected?.title }}
     </div>
     <footer class="wizard-step__footer">
       <button class="btn" @click="nextStep" :disabled="!order.draft.sizeId">Next</button>

@@ -1,20 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useOrderStore } from '@/stores/order.ts'
 import { useRouter } from 'vue-router'
 
 const order = useOrderStore()
+
 const router = useRouter()
 
-const isNewOrderAbility = computed(() => {
-  return order.checkoutStatus === 'success' || order.checkoutStatus === 'error'
-})
-
 function goToNewOrder () {
-  order.resetCheckoutStatus()
+  order.newOrder()
   router.push('/wizard/size')
 }
-
 </script>
 
 <template>
@@ -22,8 +17,19 @@ function goToNewOrder () {
     <h2 class="wizard-step__title">Step confirm</h2>
     <div class="wizard-step__body">
       <div class="btn-wrapper">
-        <button :disabled="order.checkoutStatus !== 'idle'" class="btn" @click="order.checkout()">Confirm Order!</button>
-        <button v-if="isNewOrderAbility" class="btn" @click="goToNewOrder()">New Order!</button>
+        <button
+          :disabled="order.checkoutStatus !== 'idle'"
+          class="btn"
+          @click="order.checkout()">
+          Confirm Order!
+        </button>
+
+        <button
+          v-if="order.canStartNewOrder"
+          class="btn"
+          @click="goToNewOrder()">
+          New Order!
+        </button>
       </div>
 
       <hr v-if="order.checkoutStatus !== 'idle'" />

@@ -6,8 +6,8 @@ import { computed } from 'vue'
 const order = useOrderStore()
 
 const date = computed(() => {
-  if (order.response?.date) {
-    return new Date(order.response.date).toLocaleString();
+  if (order.responseState?.date) {
+    return new Date(order.responseState.date).toLocaleString();
   } else {
     return null
   }
@@ -23,29 +23,37 @@ const date = computed(() => {
         <RouterLink :to="{ name: 'wizard-delivery' }">Delivery</RouterLink>
         <RouterLink :to="{ name: 'wizard-confirm' }">Confirm</RouterLink>
       </nav>
-      <hr />
-      Total price: <strong>{{ order.totalPrice || order.response?.price }}$</strong>
+
+      <div v-if="order.totalPrice || order.responseState?.price">
+        <hr />
+        Total price: <strong>{{ order.totalPrice || order.responseState?.price }}$</strong>
+      </div>
+
       <div v-if="order.discount">
         Your discount: <strong :class="$style.discount">{{order.discount}}$</strong>
       </div>
 
       <div v-if="order.checkoutStatus === 'success'" :class="$style.susBadge">
-        Order {{ order.response?.orderId }} created at <br>
+        Order <em>{{ order.responseState?.orderId }}</em> created at <br />
         {{ date }}! <hr />
-        Price: {{ order.response?.price }}$
-      </div>
-      <hr />
-      <div class="debugger">
-        <pre>
-          Draft:
-          {{ order.draft }}
-        </pre>
+        Price: {{ order.responseState?.price }}$
       </div>
     </aside>
-    <div class="wizard__body">
+
+    <main class="wizard__body">
       <RouterView />
-    </div>
+    </main>
   </section>
+
+
+
+  <div class="debugger" hidden="hidden">
+      <pre>
+        Draft:
+        {{ order.draft }}
+      </pre>
+  </div>
+
 </template>
 
 <style module>

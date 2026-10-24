@@ -17,7 +17,7 @@ function nextStep() {
     <h2 class="wizard-step__title">Step toppings</h2>
     <div class="wizard-step__body">
 
-      <div>Selected size: <strong>{{ order.size?.title }}</strong></div>
+      <div>Selected size: <strong>{{ order.size.selected?.title }}</strong></div>
 
       <hr>
 

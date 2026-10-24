@@ -112,7 +112,9 @@ function nextStep() {
               id="address"
               autocomplete="none"
             ></textarea>
-            <div class="form-example">10635 Santa Monica Blvd, Los Angeles, CA 90025, USA</div>
+            <div class="form-example">
+              10635 Santa Monica Blvd, Los Angeles, CA 90025, USA
+            </div>
           </div>
         </template>
 

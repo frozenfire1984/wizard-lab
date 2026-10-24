@@ -1,30 +1,23 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { SIZES } from '@/wizard/menu.ts'
 import { DISCOUNT, MIN_PRICE_FOR_DISCOUNT } from '@/wizard/constants.ts'
-import { submitOrderApi } from '@/api/order.api.ts'
-import { useArchiveStore } from '@/stores/archive.ts'
-import { useDeliverySection } from '@/stores/order/useDeliverySection.ts'
-import { emptyDraft, buildOrder } from '@/wizard/order.factory.ts'
-import type { SizeId } from '@/types/pizza.types.ts'
 import type { RequestStatus } from '@/types/request.types.ts'
 import type { OrderDraft } from '@/types/order.types.ts'
 import type { SubmitOrderResponse } from '@/api/order.api.types.ts'
 import type { ArchiveOrder } from '@/types/archive.types.ts'
+import { submitOrderApi } from '@/api/order.api.ts'
+import { useArchiveStore } from '@/stores/archive.ts'
+import { emptyDraft, buildOrder } from '@/wizard/order.factory.ts'
+import { useSizeSection } from '@/stores/order/useSizeSection.ts'
 import { useToppingSection } from '@/stores/order/useToppingSection.ts'
+import { useDeliverySection } from '@/stores/order/useDeliverySection.ts'
 
 export const useOrderStore = defineStore('order', () => {
 
   const draft = ref<OrderDraft>(emptyDraft())
 
   // Size
-  const size = computed(() => {
-    return SIZES.find((s) => s.id === draft.value.sizeId)
-  })
-
-  function selectSize(id: SizeId) {
-    draft.value.sizeId = id
-  }
+  const size = useSizeSection(draft)
 
   // Topping
   const topping = useToppingSection(draft)
@@ -34,7 +27,7 @@ export const useOrderStore = defineStore('order', () => {
 
   // Price
   const price = computed(() => {
-    const base = size.value?.price ?? 0
+    const base = size.selected.value?.price ?? 0
     const extra = topping.items.value.reduce((sum, t) => {
       return sum + t.price
     }, 0)
@@ -48,7 +41,7 @@ export const useOrderStore = defineStore('order', () => {
   const totalPrice = computed(() => price.value - discount.value + delivery.price.value)
 
   // Confirm
-  const response = ref<SubmitOrderResponse | null>(null)
+  const responseState = ref<SubmitOrderResponse | null>(null)
 
   const checkoutStatus = ref<RequestStatus>('idle')
 
@@ -56,7 +49,12 @@ export const useOrderStore = defineStore('order', () => {
     draft.value = emptyDraft()
   }
 
-  function resetCheckoutStatus() {
+  const canStartNewOrder = computed(() => {
+    return checkoutStatus.value === 'success' || checkoutStatus.value === 'error'
+  })
+
+  function newOrder() {
+    responseState.value = null
     checkoutStatus.value = 'idle'
   }
 
@@ -70,7 +68,7 @@ export const useOrderStore = defineStore('order', () => {
     submitOrderApi(builtOrder)
       .then((resp) => {
         checkoutStatus.value = 'success'
-        response.value = resp
+        responseState.value = resp
 
         const orderArchive: ArchiveOrder = {
           ...builtOrder,
@@ -89,8 +87,8 @@ export const useOrderStore = defineStore('order', () => {
   }
 
   return {
-    draft, size, selectSize, topping,
+    draft, size, topping,
     totalPrice, discount, delivery,
-    response, checkoutStatus, checkout, resetCheckoutStatus
+    responseState, checkoutStatus, checkout,  canStartNewOrder, newOrder
   }
 })

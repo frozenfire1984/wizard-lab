@@ -16,5 +16,7 @@ export function useDeliverySection(draft: Ref<OrderDraft>) {
     return Boolean(draft.value.firstName && draft.value.phone)
   })
 
-  return { price, isFilled }
+  const isDone = computed(() => isFilled.value)
+
+  return { price, isFilled, isDone }
 }

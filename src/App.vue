@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { computed, provide } from 'vue'
+
+const route = useRoute()
+const currentStep = computed(() => route.name)
+
+provide('currentStep', currentStep)
 </script>
 
 <template>

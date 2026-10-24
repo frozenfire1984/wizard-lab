@@ -13,5 +13,7 @@ export function useSizeSection(draft: Ref<OrderDraft>) {
     draft.value.sizeId = id
   }
 
-  return { selected, select }
+  const isDone = computed(() => draft.value.sizeId !== null)
+
+  return { selected, select, isDone }
 }

@@ -6,6 +6,7 @@ import StepToppings from '@/views/wizard/StepToppings.vue'
 import StepDelivery from '@/views/wizard/StepDelivery.vue'
 import StepConfirm from '@/views/wizard/StepConfirm.vue'
 import ArchiveView from '@/views/ArchiveView.vue'
+import { useOrderStore } from '@/stores/order.ts'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,21 +31,37 @@ const router = createRouter({
           path: 'toppings',
           name: 'wizard-toppings',
           component: StepToppings,
+          beforeEnter: () => {
+            const order = useOrderStore()
+            if (!order.size.isDone) {
+              return {name: 'wizard-size'}
+            }
+          }
         },
         {
           path: 'delivery',
           name: 'wizard-delivery',
           component: StepDelivery,
+          beforeEnter: () => {
+            const order = useOrderStore()
+            if (!order.topping.isDone) {
+              return {name: 'wizard-toppings'}
+            }
+          }
         },
         {
           path: 'confirm',
           name: 'wizard-confirm',
           component: StepConfirm,
+          beforeEnter: () => {
+            const order = useOrderStore()
+            if (!order.delivery.isDone) {
+              return {name: 'wizard-delivery'}
+            }
+          }
         },
       ],
     },
-
-
     {
       path: '/archive',
       name: 'archive',

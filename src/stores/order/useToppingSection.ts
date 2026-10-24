@@ -29,5 +29,7 @@ export function useToppingSection(draft: Ref<OrderDraft>) {
     draft.value.toppingIds = [...arr]
   }
 
-  return { items, noEmpty, isSelected, toggle }
+  const isDone = computed(() => noEmpty.value)
+
+  return { items, noEmpty, isSelected, toggle, isDone }
 }

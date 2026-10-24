@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { useOrderStore } from '@/stores/order.ts'
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 
 const order = useOrderStore()
 
@@ -12,6 +12,9 @@ const date = computed(() => {
     return null
   }
 })
+
+const currentStep = inject('currentStep')
+
 </script>
 
 <template>
@@ -45,10 +48,11 @@ const date = computed(() => {
     </main>
   </section>
 
-
-
-  <div class="debugger" hidden="hidden">
+  <div class="debugger">
       <pre>
+        currentStep:
+        {{ currentStep }}
+
         Draft:
         {{ order.draft }}
       </pre>
@@ -86,6 +90,12 @@ const date = computed(() => {
     display: flex;
     flex-direction: column;
     gap: 16px;
+
+    .router-link-active ~ a {
+      pointer-events: none;
+      opacity: .5;
+      text-decoration: none;
+    }
   }
 
   &__body {

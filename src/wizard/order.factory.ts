@@ -16,6 +16,7 @@ export function emptyDraft():OrderDraft {
 export function buildOrder(draft: OrderDraft, price: Price):OrderFinal {
 
   if (draft.sizeId === null) throw new Error('buildOrder: sizeId not exist')
+  if (draft.toppingIds.length === 0) throw new Error('buildOrder: toppingIds is empty')
 
   const { city, address, ...base } = draft
 

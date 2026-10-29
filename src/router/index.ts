@@ -7,6 +7,7 @@ import StepDelivery from '@/views/wizard/StepDelivery.vue'
 import StepConfirm from '@/views/wizard/StepConfirm.vue'
 import ArchiveView from '@/views/ArchiveView.vue'
 import { useOrderStore } from '@/stores/order.ts'
+import { WIZARD_STEPS } from '@/wizard/steps.ts'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,47 +21,15 @@ const router = createRouter({
       path: '/wizard',
       name: 'wizard',
       component: WizardView,
-      redirect: { name: 'wizard-size' },
-      children: [
-        {
-          path: 'size',
-          name: 'wizard-size',
-          component: StepSize,
-        },
-        {
-          path: 'toppings',
-          name: 'wizard-toppings',
-          component: StepToppings,
-          beforeEnter: () => {
-            const order = useOrderStore()
-            if (!order.size.isDone) {
-              return {name: 'wizard-size'}
-            }
-          }
-        },
-        {
-          path: 'delivery',
-          name: 'wizard-delivery',
-          component: StepDelivery,
-          beforeEnter: () => {
-            const order = useOrderStore()
-            if (!order.topping.isDone) {
-              return {name: 'wizard-toppings'}
-            }
-          }
-        },
-        {
-          path: 'confirm',
-          name: 'wizard-confirm',
-          component: StepConfirm,
-          beforeEnter: () => {
-            const order = useOrderStore()
-            if (!order.delivery.isDone) {
-              return {name: 'wizard-delivery'}
-            }
-          }
-        },
-      ],
+      redirect: { name: WIZARD_STEPS[0].name },
+      children: WIZARD_STEPS.map((step) => ({
+        path: step.path,
+        name: step.name,
+        component: step.component,
+        meta: {
+          title: step.title,
+        }
+      })),
     },
     {
       path: '/archive',

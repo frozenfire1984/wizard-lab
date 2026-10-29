@@ -2,6 +2,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { useOrderStore } from '@/stores/order.ts'
 import { computed, inject } from 'vue'
+import { WIZARD_STEPS } from '@/wizard/steps.ts'
 
 const order = useOrderStore()
 
@@ -21,10 +22,12 @@ const currentStep = inject('currentStep')
   <section class="wizard">
     <aside class="wizard__aside">
       <nav class="wizard__step-nav">
-        <RouterLink :to="{ name: 'wizard-size' }">Size</RouterLink>
-        <RouterLink :to="{ name: 'wizard-toppings' }">Toppings</RouterLink>
-        <RouterLink :to="{ name: 'wizard-delivery' }">Delivery</RouterLink>
-        <RouterLink :to="{ name: 'wizard-confirm' }">Confirm</RouterLink>
+        <RouterLink
+          v-for="step in WIZARD_STEPS"
+          :key="step.name"
+          :to="{ name: step.name }"
+        >{{ step.title }}</RouterLink>
+
       </nav>
 
       <div v-if="order.totalPrice || order.responseState?.price">
@@ -91,11 +94,11 @@ const currentStep = inject('currentStep')
     flex-direction: column;
     gap: 16px;
 
-    .router-link-active ~ a {
+    /*.router-link-active ~ a {
       pointer-events: none;
       opacity: .5;
       text-decoration: none;
-    }
+    }*/
   }
 
   &__body {
